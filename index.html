@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HỎI ĐÁP VÔ HẠN - ĐÔNG TÂY KIM CỔ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kosugi&display=swap" rel="stylesheet">
+    <style>
+      @keyframes blink {
+        from, to { opacity: 1 }
+        50% { opacity: 0; }
+      }
+
+      body {
+        background-color: #ffffff;
+        color: #000000;
+        font-family: 'Kosugi', sans-serif;
+        font-size: 1.1rem; /* Set base font size for the entire app */
+        line-height: 1.6; /* Set base line height for readability */
+        margin: 0;
+        padding: 2rem 2rem 6rem 2rem; /* Increased bottom padding for sticky footer */
+      }
+      #root {
+        max-width: 65ch; /* Optimal line length for readability */
+        margin: auto;
+      }
+      /* Reset headers to have the same font size as the body */
+      h1, h2, h3, h4, h5, h6 {
+        font-size: 1em; /* 1em equals the parent font-size, which is 1.1rem from body */
+        margin: 0;
+        font-weight: normal; /* Ensure no bolding by default */
+      }
+      /* Reset button for link-like behavior */
+      button {
+        background: none;
+        border: none;
+        padding: 0;
+        font: inherit;
+        color: inherit;
+        cursor: pointer;
+      }
+      .interactive-word {
+        color: #000000;
+        text-decoration: none;
+        transition: color 0.2s ease-in-out;
+      }
+      .interactive-word:hover {
+        color: #0000ff;
+        text-decoration: underline;
+      }
+      .footer-text {
+        font-size: 0.9em;
+        color: #888;
+      }
+      .footer-text a {
+        color: inherit;
+        text-decoration: none;
+        transition: color 0.2s ease-in-out;
+      }
+      .footer-text a:hover {
+        color: #0000ff;
+        text-decoration: underline;
+      }
+      .ascii-art {
+        font-family: monospace;
+        text-align: left; /* Aligned to the left for better block letter rendering */
+        white-space: pre;
+        color: #888;
+        margin: 2rem 0; /* Increased margin for more breathing room */
+        line-height: 1.1; /* Tighter line height for better art rendering */
+        font-size: 0.8em; /* Slightly smaller font for more detailed art */
+      }
+      .blinking-cursor {
+        animation: blink 1s step-end infinite;
+      }
+      
+      /* Search Bar Styles */
+      .search-container {
+        display: flex;
+        align-items: center; /* Vertically center items */
+        gap: 1rem;
+        margin-bottom: 3rem;
+      }
+
+      .search-form {
+        flex-grow: 1; /* Make form take available space */
+        position: relative; /* Context for the mic button */
+      }
+
+      .search-input {
+        width: 100%;
+        padding: 0.5rem 2.8rem 0.5rem 0.75rem; /* Right padding for mic button */
+        font: inherit;
+        color: inherit;
+        background-color: transparent;
+        border: 1px solid #888; /* Subtle grey border */
+        border-radius: 4px; /* Slightly rounded corners */
+        box-sizing: border-box;
+        outline: none;
+        transition: border-color 0.2s ease-in-out;
+      }
+
+      .search-input:focus {
+        border-color: #000000; /* Black border on focus */
+      }
+      
+      .search-input:disabled {
+        color: #ccc;
+        border-color: #e0e0e0;
+      }
+
+      .search-input::placeholder {
+        color: #888;
+        opacity: 1;
+      }
+
+      .mic-button {
+        position: absolute;
+        right: 0.5rem;
+        top: 50%;
+        transform: translateY(-50%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 2rem;
+        height: 2rem;
+        padding: 0;
+        border-radius: 50%;
+        color: #888;
+        transition: all 0.2s ease-in-out;
+      }
+
+      .mic-button:hover:not(:disabled) {
+        background-color: #f0f0f0;
+        color: #000;
+      }
+
+      .mic-button.listening {
+        color: #cc0000;
+        box-shadow: 0 0 8px rgba(204, 0, 0, 0.5);
+      }
+
+      .mic-button:disabled {
+        color: #ccc;
+        cursor: not-allowed;
+      }
+      
+      .random-button {
+        background: none;
+        border: none;
+        padding: 0.5rem 0;
+        font: inherit;
+        color: #000000;
+        cursor: pointer;
+        white-space: nowrap; /* Prevent "Random" from wrapping */
+      }
+      
+      .random-button:hover:not(:disabled) {
+        color: #0000ff;
+      }
+
+      .random-button:disabled {
+        color: #ccc;
+        cursor: not-allowed;
+      }
+      
+      .content-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+      }
+
+      .action-buttons {
+        display: flex;
+        gap: 0.5rem;
+      }
+
+      .action-buttons button {
+        background-color: #f0f0f0;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        padding: 0.25rem 0.75rem;
+        font-size: 0.85em;
+        color: #333;
+        white-space: nowrap;
+        transition: all 0.2s ease-in-out;
+      }
+      
+      .action-buttons button:hover:not(.copied, .speaking) {
+        background-color: #e0e0e0;
+        border-color: #bbb;
+      }
+
+      .copy-button.copied {
+        background-color: #d4edda;
+        color: #155724;
+        border-color: #c3e6cb;
+        cursor: default;
+      }
+
+      .speak-button.speaking {
+        background-color: #d1ecf1;
+        color: #0c5460;
+        border-color: #bee5eb;
+      }
+
+      .sticky-footer {
+        position: fixed;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        max-width: calc(65ch + 4rem);
+        width: 100%;
+        padding: 1rem 2rem;
+        box-sizing: border-box;
+        background-color: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(4px);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-top: 1px solid #e0e0e0;
+      }
+      .footer-content {
+        text-align: left;
+      }
+      .footer-button {
+        background: none;
+        border: none;
+        padding: 0;
+        font: inherit;
+        color: #888;
+        cursor: pointer;
+        text-decoration: underline;
+        font-size: 0.9em;
+        transition: color 0.2s ease-in-out;
+        white-space: nowrap;
+      }
+      .footer-button:hover {
+        color: #0000ff;
+      }
+      
+      /* Modal Styles */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.6);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+      }
+      .modal-content {
+        background-color: #ffffff;
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        max-width: 55ch;
+        width: 90%;
+        position: relative;
+        line-height: 1.7;
+      }
+      .modal-title {
+        margin-top: 0;
+        margin-bottom: 1.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        font-weight: bold;
+      }
+      .modal-close-button {
+        position: absolute;
+        top: 0.75rem;
+        right: 1rem;
+        font-size: 2rem;
+        font-weight: bold;
+        color: #aaa;
+        line-height: 1;
+        transition: color 0.2s ease-in-out;
+      }
+      .modal-close-button:hover {
+        color: #000;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react/": "https://esm.sh/react@^19.1.0/",
+    "react": "https://esm.sh/react@^19.1.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.1.0/",
+    "@google/genai": "https://esm.sh/@google/genai@^1.7.0"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>

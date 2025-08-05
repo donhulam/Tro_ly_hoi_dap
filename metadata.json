@@ -1,0 +1,8 @@
+{
+  "requestFramePermissions": [
+    "microphone"
+  ],
+  "name": "Hỏi Đáp Vô Hạn - Đông Tây Kim Cổ",
+  "description": "Dự án này được lấy cảm hứng từ ý tưởng về một wiki vô hạn, nhằm mục đích tạo ra một trải nghiệm khám phá và học hỏi liền mạch.",
+  "prompt": ""
+}
