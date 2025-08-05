@@ -4,11 +4,10 @@
 */
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { streamDefinition, generateAsciiArt, AsciiArtData } from './services/geminiService';
+import { streamDefinition } from './services/geminiService';
 import ContentDisplay from './components/ContentDisplay';
 import SearchBar from './components/SearchBar';
 import LoadingSkeleton from './components/LoadingSkeleton';
-import AsciiArtDisplay from './components/AsciiArtDisplay';
 import AboutModal from './components/AboutModal';
 
 // Danh sách các từ và cụm từ tiếng Việt thú vị cho nút ngẫu nhiên.
@@ -23,28 +22,11 @@ const PREDEFINED_WORDS = [
 const UNIQUE_WORDS = [...new Set(PREDEFINED_WORDS)];
 
 
-/**
- * Creates a simple ASCII art bounding box as a fallback.
- * @param topic The text to display inside the box.
- * @returns An AsciiArtData object with the generated art.
- */
-const createFallbackArt = (topic: string): AsciiArtData => {
-  const displayableTopic = topic.length > 20 ? topic.substring(0, 17) + '...' : topic;
-  const paddedTopic = ` ${displayableTopic} `;
-  const topBorder = `┌${'─'.repeat(paddedTopic.length)}┐`;
-  const middle = `│${paddedTopic}│`;
-  const bottomBorder = `└${'─'.repeat(paddedTopic.length)}┘`;
-  return {
-    art: `${topBorder}\n${middle}\n${bottomBorder}`
-  };
-};
-
 const App: React.FC = () => {
   const [currentTopic, setCurrentTopic] = useState<string>('Siêu văn bản');
   const [content, setContent] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [asciiArt, setAsciiArt] = useState<AsciiArtData | null>(null);
   const [generationTime, setGenerationTime] = useState<number | null>(null);
   const [copyButtonText, setCopyButtonText] = useState<string>('Sao chép');
   const [isAboutModalOpen, setIsAboutModalOpen] = useState(false);
@@ -146,31 +128,13 @@ const App: React.FC = () => {
 
     let isCancelled = false;
 
-    const fetchContentAndArt = async () => {
+    const fetchContent = async () => {
       // Set initial state for a clean page load
       setIsLoading(true);
       setError(null);
       setContent(''); // Clear previous content immediately
-      setAsciiArt(null);
       setGenerationTime(null);
       const startTime = performance.now();
-
-      // Kick off ASCII art generation, but don't wait for it.
-      // It will appear when it's ready, without blocking the definition.
-      generateAsciiArt(currentTopic)
-        .then(art => {
-          if (!isCancelled) {
-            setAsciiArt(art);
-          }
-        })
-        .catch(err => {
-          if (!isCancelled) {
-            console.error("Failed to generate ASCII art:", err);
-            // Generate a simple fallback ASCII art box on failure
-            const fallbackArt = createFallbackArt(currentTopic);
-            setAsciiArt(fallbackArt);
-          }
-        });
 
       let accumulatedContent = '';
       try {
@@ -201,7 +165,7 @@ const App: React.FC = () => {
       }
     };
 
-    fetchContentAndArt();
+    fetchContent();
     
     return () => {
       isCancelled = true;
@@ -230,7 +194,6 @@ const App: React.FC = () => {
     setIsLoading(true); // Disable UI immediately
     setError(null);
     setContent('');
-    setAsciiArt(null);
 
     const randomIndex = Math.floor(Math.random() * UNIQUE_WORDS.length);
     const randomWord = UNIQUE_WORDS[randomIndex];
@@ -294,11 +257,10 @@ const App: React.FC = () => {
       <AboutModal isOpen={isAboutModalOpen} onClose={() => setIsAboutModalOpen(false)} />
       <SearchBar onSearch={handleSearch} onRandom={handleRandom} isLoading={isLoading} />
       
-      <header style={{ textAlign: 'center', marginBottom: '2rem' }}>
+      <header style={{ textAlign: 'center', marginBottom: '3rem', marginTop: '1rem' }}>
         <h1 style={{ letterSpacing: '0.2em', textTransform: 'uppercase' }}>
           HỎI ĐÁP VÔ HẠN - ĐÔNG TÂY KIM CỔ
         </h1>
-        <AsciiArtDisplay artData={asciiArt} topic={currentTopic} />
       </header>
       
       <main>
